@@ -1,12 +1,11 @@
 from django.urls import path
-from .views import home_page_view, AboutPageView
+from .views import PostList
 
 app_name = 'pages'
 
 urlpatterns = [
-    path("about/", AboutPageView.as_view(), name="about"),
-    path("", home_page_view, name="home"),
-    
+    # path('',post_list, name="post_list" )
+    path('',PostList.as_view(), name="home" ),
     
     
 ]
