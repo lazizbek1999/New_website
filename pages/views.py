@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from .models import Post
-from django.views.generic import ListView
+from django.views.generic import ListView,DetailView
 # def post_list(request):
 #     posts = Post.objects.all()
 #     context = {'posts': posts}
@@ -10,4 +10,9 @@ from django.views.generic import ListView
 
 class PostList(ListView):
     model = Post
-    template_name = 'pages/post_list.html'
+    template_name = 'pages/home.html'
+    
+class PostDetail(DetailView):
+    model = Post
+    template_name = "pages/post_detail.html"
+    context_object_name = 'single_post'
