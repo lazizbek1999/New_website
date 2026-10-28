@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 db.sqlite3
 .env
+*.csv
+data/
+node_modules/
+notes.txt

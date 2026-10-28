@@ -1,10 +1,38 @@
 from django.test import TestCase
-from pages.models import Post
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+from pages.models import Post
 
-class PostModelTests(TestCase):
+
+class PostViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="testuser", email="test@email.com", password="secret"
+        )
+        cls.post = Post.objects.create(
+            title="A good title",
+            body="This is a test!",
+            author=cls.user,
+        )
+
     def test_homepage(self):
-        response = self.client.get(reverse('pages:home'))
-        self.assertTemplateUsed(response, 'pages/post_list.html')
+        response = self.client.get(reverse("pages:home"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Message Board Homepage')
+        self.assertTemplateUsed(response, "pages/home.html")
+        self.assertContains(response, "Django blog")
+
+    def test_detail_view(self):
+        response = self.client.get(
+            reverse("pages:post_detail", kwargs={"pk": self.post.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/post_detail.html")
+        self.assertContains(response, "A good title")
+        self.assertContains(response, "This is a test!")
+
+    def test_detail_view_404(self):
+        wrong_response = self.client.get(
+            reverse("pages:post_detail", kwargs={"pk": 99})
+        )
+        self.assertEqual(wrong_response.status_code, 404)
