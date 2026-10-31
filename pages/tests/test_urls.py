@@ -24,7 +24,7 @@ class PostViewTests(TestCase):
 
     def test_detail_view(self):
         response = self.client.get(
-            reverse("pages:post_detail", kwargs={"pk": self.post.pk})
+            reverse("pages:post-detail", kwargs={"pk": self.post.pk})
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "pages/post_detail.html")
@@ -33,6 +33,24 @@ class PostViewTests(TestCase):
 
     def test_detail_view_404(self):
         wrong_response = self.client.get(
-            reverse("pages:post_detail", kwargs={"pk": 99})
+            reverse("pages:post-detail", kwargs={"pk": 999})
         )
         self.assertEqual(wrong_response.status_code, 404)
+
+    def test_login(self):
+        response = self.client.post(
+            reverse('login'),
+            {
+                'username': 'testuser',
+                'password': 'secret',
+                'email': 'test@email.com',
+            },
+        )
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        
+        
+    def test_protected_page_redirects_to_login(self):
+        response = self.client.get(reverse("pages:post-new"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("accounts:login"), response.url)
